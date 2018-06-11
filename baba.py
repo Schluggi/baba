@@ -9,8 +9,8 @@ from urllib.request import urlretrieve
 from smartvalues import Device
 
 
-__version__ = '6.1.1'
-__versionDate__ = '2017-08-20'
+__version__ = '6.1.2'
+__versionDate__ = '2018-06-11'
 
 supported = ('sd', 'mmcblk', 'sr', 'vd', 'nvme')
 
