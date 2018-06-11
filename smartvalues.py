@@ -22,23 +22,24 @@ class Device(object):
                    'rotation': b'Rotation Rate:\s*([\w\s-]*)\n',
                    
                    'support'  : b'SMART support is:\s*(Enabled|Disabled)',
-                   'health'   : b'SMART overall-health self-assessment test result:\s*([\w\s-]*)\n',
+                   'health'   : b'SMART overall-health self-assessment test result:\s*([\w\s\-\!]*)\n',
                    'usbbridge': b'\s+?Unknown USB bridge\s+?\[(.*)\]',
                    
                    #'Raw_Read_Error_Rate'     : b'Raw_Read_Error_Rate\s+\w*\s*\w*\s*\w*\s*\w*\s*[\w-]*\s*\w*\s*[\w-]*\s*(\d*)',
-                   'Reallocated_Sector_Ct'   : b'Reallocated_Sector_Ct\s+\w*\s*\w*\s*\w*\s*[\w\-]*\s*[\w-]*\s*\w*\s*[\w-]*\s*(\d*)',
-                   'Power_On_Hours'          : b'Power_On_Hours\s+\w*\s*\w*\s*\w*\s*[\w\-]*\s*[\w-]*\s*\w*\s*[\w-]*\s*(\d*)',
-                   'Reallocated_Event_Count' : b'Reallocated_Event_Count\s+\w*\s*\w*\s*\w*\s*[\w\-]*\s*[\w-]*\s*\w*\s*[\w-]*\s*(\d*)',
-                   'Current_Pending_Sector'  : b'Current_Pending_Sector\s+\w*\s*\w*\s*\w*\s*[\w\-]*\s*[\w-]*\s*\w*\s*[\w-]*\s*(\d*)',
-                   #'Offline_Uncorrectable'   : b'Offline_Uncorrectable\s+\w*\s*\w*\s*\w*\s*\w*\s*[\w-]*\s*\w*\s*[\w-]*\s*(\d*)',
-                   'UDMA_CRC_Error_Count'    : b'UDMA_CRC_Error_Count\s+\w*\s*\w*\s*\w*\s*[\w\-]*\s*[\w-]*\s*\w*\s*[\w-]*\s*(\d*)',
-                   'Total_LBAs_Written'      : b'Total_LBAs_Written\s+\w*\s*\w*\s*\w*\s*[\w\-]*\s*[\w-]*\s*\w*\s*[\w-]*\s*(\d*)',
+                   'Reallocated_Sector_Ct'   : b'Reallocated_Sector_Ct\s+\w*\s*\w*\s*\w*\s*[\w\-]*\s*[\w-]*\s*\w*\s*[\w\-\!]*\s*(\d*)',
+                   'Power_On_Hours'          : b'Power_On_Hours\s+\w*\s*\w*\s*\w*\s*[\w\-]*\s*[\w-]*\s*\w*\s*[\w\-\!]*\s*(\d*)',
+                   'Reallocated_Event_Count' : b'Reallocated_Event_Count\s+\w*\s*\w*\s*\w*\s*[\w\-]*\s*[\w-]*\s*\w*\s*[\w\-\!]*\s*(\d*)',
+                   'Current_Pending_Sector'  : b'Current_Pending_Sector\s+\w*\s*\w*\s*\w*\s*[\w\-]*\s*[\w-]*\s*\w*\s*[\w\-\!]*\s*(\d*)',
+                   #'Offline_Uncorrectable'   : b'Offline_Uncorrectable\s+\w*\s*\w*\s*\w*\s*\w*\s*[\w-]*\s*\w*\s*[\w\-\!]*\s*(\d*)',
+                   'UDMA_CRC_Error_Count'    : b'UDMA_CRC_Error_Count\s+\w*\s*\w*\s*\w*\s*[\w\-]*\s*[\w-]*\s*\w*\s*[\w\-\!]*\s*(\d*)',
+                   'Total_LBAs_Written'      : b'Total_LBAs_Written\s+\w*\s*\w*\s*\w*\s*[\w\-]*\s*[\w-]*\s*\w*\s*[\w\-\!]*\s*(\d*)',
 
-                   'Wear_Leveling_Count'     : b'Wear_Leveling_Count\s+\w*\s*(\d*)\s*\w*\s*[\w\-]*\s*[\w-]*\s*\w*\s*[\w-]*\s*\d*',
-                   'Remaining_lifetime_Perc' : b'Remaining_lifetime_Perc\s+\w*\s*(\d*)\s*\w*\s*[\w\-]*\s*[\w-]*\s*\w*\s*[\w-]*\s*\d*',
-                   'Total_Bad_Block_Count'   : b'Total_Bad_Block_Count\s+\w*\s*(\d*)\s*\w*\s*[\w\-]*\s*[\w-]*\s*\w*\s*[\w-]*\s*\d*',
-                   'Erase_Fail_Count'        : b'Erase_Fail_Count\s+\w*\s*(\d*)\s*\w*\s*[\w\-]*\s*[\w-]*\s*\w*\s*[\w-]*\s*\d*',
-                   'Used_Reserve_Block_Count': b'Used_Reserve_Block_Count\s+\w*\s*(\d*)\s*\w*\s*[\w\-]*\s*[\w-]*\s*\w*\s*[\w-]*\s*\d*'
+                   'Wear_Leveling_Count'     : b'Wear_Leveling_Count\s+\w*\s*(\d*)\s*\w*\s*[\w\-]*\s*[\w-]*\s*\w*\s*[\w\-\!]*\s*\d*',
+                   'Remaining_lifetime_Perc' : b'Remaining_lifetime_Perc\s+\w*\s*(\d*)\s*\w*\s*[\w\-]*\s*[\w-]*\s*\w*\s*[\w\-\!]*\s*\d*',
+                   'Percent_Lifetime_Used'   : b'Percent_Lifetime_Used\s+\w*\s*(\d*)\s*\w*\s*[\w\-]*\s*[\w-]*\s*\w*\s*[\w\-\!]*\s*\d*',
+                   'Total_Bad_Block_Count'   : b'Total_Bad_Block_Count\s+\w*\s*\d*\s*\w*\s*[\w\-]*\s*[\w-]*\s*\w*\s*[\w\-\!]*\s*(\d*)',
+                   'Erase_Fail_Count'        : b'Erase_Fail_Count\s+\w*\s*\d*\s*\w*\s*[\w\-]*\s*[\w-]*\s*\w*\s*[\w\-\!]*\s*(\d*)',
+                   'Used_Reserve_Block_Count': b'Used_Reserve_Block_Count\s+\w*\s*(\d*)\s*\w*\s*[\w\-]*\s*[\w-]*\s*\w*\s*[\w\-\!]*\s*\d*'
                    }
         proc = Popen(['smartctl', '-a', self.dev_path], stdout=PIPE, stderr=STDOUT)
         if self.timeout:
@@ -168,9 +169,13 @@ class Device(object):
             if 'Used_Reserve_Block_Count' in self.info and lifetime > int(self.info['Used_Reserve_Block_Count']):
                 lifetime = int(self.info['Used_Reserve_Block_Count'])
 
-        elif 'crucial' in vendor_model and 'Remaining_lifetime_Perc' in self.info:
-            lifetime = self.info['Remaining_lifetime_Perc']
-
+        elif 'crucial' in vendor_model:
+            if 'Remaining_lifetime_Perc' in self.info:
+                lifetime = self.info['Remaining_lifetime_Perc']
+            
+            if 'Percent_Lifetime_Used' in self.info and lifetime > int(self.info['Percent_Lifetime_Used']):
+                lifetime = self.info['Percent_Lifetime_Used']
+                
         elif 'ocz' in vendor_model and 'Total_Bad_Block_Count' in self.info:
             lifetime = self.info['Total_Bad_Block_Count']
             
