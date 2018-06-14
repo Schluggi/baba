@@ -166,19 +166,30 @@ class Device(object):
             if 'Wear_Leveling_Count' in self.info:
                 lifetime = int(self.info['Wear_Leveling_Count'])
 
-            if 'Used_Reserve_Block_Count' in self.info and lifetime > int(self.info['Used_Reserve_Block_Count']):
-                lifetime = int(self.info['Used_Reserve_Block_Count'])
+            if 'Used_Reserve_Block_Count' in self.info:
+                if type(lifetime) is int:
+                    if lifetime > int(self.info['Used_Reserve_Block_Count']):
+                        lifetime = int(self.info['Used_Reserve_Block_Count'])
+                else:
+                    lifetime = int(self.info['Used_Reserve_Block_Count'])
 
         elif 'crucial' in vendor_model:
             if 'Remaining_lifetime_Perc' in self.info:
-                lifetime = self.info['Remaining_lifetime_Perc']
+                lifetime = int(self.info['Remaining_lifetime_Perc'])
             
-            if 'Percent_Lifetime_Used' in self.info and lifetime > int(self.info['Percent_Lifetime_Used']):
-                lifetime = self.info['Percent_Lifetime_Used']
+            if 'Percent_Lifetime_Used' in self.info:
+                if type(lifetime) is int:
+                    if lifetime > int(self.info['Percent_Lifetime_Used']):
+                        lifetime = int(self.info['Percent_Lifetime_Used'])
+                else:
+                    lifetime = int(self.info['Percent_Lifetime_Used'])
+                    
+                    
                 
         elif 'ocz' in vendor_model and 'Total_Bad_Block_Count' in self.info:
-            lifetime = self.info['Total_Bad_Block_Count']
-            
+            lifetime = int(self.info['Total_Bad_Block_Count'])
+        
+        
         return {'vendor': vendor,
                 'model': model,
                 'serial': serial,
