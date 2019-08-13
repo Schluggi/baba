@@ -7,8 +7,8 @@ from urllib.request import urlretrieve
 from devices import Device
 
 
-__version__ = '6.2.0'
-__versionDate__ = '2019-08-12'
+__version__ = '6.2.1'
+__versionDate__ = '2019-08-13'
 
 supported = ('sd', 'mmcblk', 'sr', 'vd', 'nvme')
 
