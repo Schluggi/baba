@@ -114,8 +114,11 @@ class Device(object):
         elif self.name.startswith('sd'):
             if 'samsung' in self.vendor_model:
                 if '177' in self.smart_data:  # Wear_Leveling_Count
-                    lifetime = int(self.smart_data['177']['raw_value'])
-
+                    lifetime = int(self.smart_data['177']['value'])
+				
+                elif '173' in self.smart_data:  # Wear_Leveling_Count
+                    lifetime = int(self.smart_data['173']['value'])
+                
                 if '179' in self.smart_data:  # Used_Reserve_Block_Count
                     smart_179 = int(self.smart_data['179']['raw_value'])
 
