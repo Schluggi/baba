@@ -145,19 +145,19 @@ class Device(object):
         if self.smart_support == 'Disabled':
             health = 'DSBLD'
 
-        elif self.name.startswith('sda'):
+        elif self.name.startswith('sd'):
             if 'SMART support is' in self.smart_info and self.smart_info['SMART support is'] == 'Disabled':
                 health = 'DSBLD'
 
             if health == 'PASSED':
-                if '199' in self.smart_info:  # UDMA_CRC_Error_Count
+                if '199' in self.smart_data:  # UDMA_CRC_Error_Count
                     if int(self.smart_data['199']['raw_value']) >= 500:
                         health = 'UDMA'
 
-                if '5' in self.smart_info:  # Reallocated_Sector_Ct
+                if '5' in self.smart_data:  # Reallocated_Sector_Ct
                     sector_sum += int(self.smart_data['5']['raw_value'])
 
-                if '197' in self.smart_info:  # Current_Pending_Sector
+                if '197' in self.smart_data:  # Current_Pending_Sector
                     sector_sum += int(self.smart_data['197']['raw_value'])
 
                 #: TODO -> INCORRECT!
