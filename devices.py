@@ -197,7 +197,7 @@ class Device(object):
 
     def _rotation(self):
         if self.name.startswith('nvme'):
-            return 'NVME'
+            return 'NVMe'
         elif 'Rotation Rate' in self.smart_info:
             if self.smart_info['Rotation Rate'] == 'Solid State Device':
                 return 'SSD'
