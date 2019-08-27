@@ -26,7 +26,10 @@ class Device(object):
         self.vendor_model = ''
 
         process = Popen(['smartctl', '-a', self.path], stdout=PIPE, stderr=STDOUT)
-        returncode = process.wait(self.timeout)
+        if self.timeout:
+            returncode = process.wait(self.timeout)
+        else:
+            returncode = process.wait()
         output = process.stdout.read().decode()
 
 #        if returncode != 0:  # TODO: IMPROVE ERROR HANDLING!
