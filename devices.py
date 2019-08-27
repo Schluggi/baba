@@ -50,7 +50,7 @@ class Device(object):
             else:
                 info_data, smart_data = output.split('=== START OF READ SMART DATA SECTION ===')
 
-            rex_health = search('(SMART overall-health self-assessment test result:|SMART Health Status:)\s*([\w\s\-!]+)\n', output)
+            rex_health = search('(SMART overall-health self-assessment test result:|SMART Health Status:)\s*([\w\s\-!]+?)\n', output)
 
             if rex_health:
                 self.smart_health = rex_health.group(2).strip()
