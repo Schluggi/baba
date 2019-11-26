@@ -157,11 +157,8 @@ class Device(object):
                     if int(self.smart_data['199']['raw_value']) >= 500:
                         health = 'UDMA'
 
-                if '5' in self.smart_data:  # Reallocated_Sector_Ct
-                    sector_sum += int(self.smart_data['5']['raw_value'])
-
-                if '197' in self.smart_data:  # Current_Pending_Sector
-                    sector_sum += int(self.smart_data['197']['raw_value'])
+                for i in [str(i) for i in [5, 197, 198] if str(i) in self.smart_data]:  # Reallocated_Sector_Ct, Current_Pending_Sector, Uncorrectable_Sector_Count
+                    sector_sum += int(self.smart_data[i]['raw_value'])
 
                 #: TODO -> INCORRECT!
                 if 'crucial' in self.vendor_model and '172' in self.smart_data:  # Erase_Fail_Count
