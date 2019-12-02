@@ -157,7 +157,7 @@ class Device(object):
                     if int(self.smart_data['199']['raw_value']) >= 500:
                         health = 'UDMA'
 
-                for i in [str(i) for i in [5, 197, 198] if str(i) in self.smart_data]:  # Reallocated_Sector_Ct, Current_Pending_Sector, Uncorrectable_Sector_Count
+                for i in [str(i) for i in [5, 187, 188, 197, 198] if str(i) in self.smart_data]:  # 5:Reallocated_Sector_Ct, 187:Uncorrectable_Error_Cnt, 197:Current_Pending_Sector, 198:Uncorrectable_Sector_Count
                     sector_sum += int(self.smart_data[i]['raw_value'])
 
                 #: TODO -> INCORRECT!
