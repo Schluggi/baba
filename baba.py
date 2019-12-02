@@ -268,7 +268,7 @@ elif args.device:
     else:
         devices = [args.device]
 else:
-    devices = [f for f in sorted(listdir('/sys/block/')) if f.startswith(supported)]
+    devices = [f for f in sorted(listdir('/sys/block/'), key=lambda x: (len(x), x)) if f.startswith(supported)]
 
 factor = 1000
 if args.mib:
