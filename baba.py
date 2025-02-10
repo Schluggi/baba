@@ -12,29 +12,29 @@ __versionDate__ = '2025-02-10'
 
 supported = ('sd', 'mmcblk', 'sr', 'vd', 'nvme')
 
-cols = [('Vendor / Model', 26),  #25
-        ('Serial', 21),  #16
-        ('Firmware', 10),  #7
-        ('Size', 9),  #7
-        ('Runtime', 12),  #PoH 6
+cols = [('Vendor / Model', 26),  # 25
+        ('Serial', 21),  # 16
+        ('Firmware', 10),  # 7
+        ('Size', 9),  # 7
+        ('Runtime', 12),  # PoH 6
         ('Written', 10),
         ('Rpm', 6),  # 5
         ('Life', 6),  # 5
         ('S.M.A.R.T.', 10)]
 
-alternatives = { 'model': ['/sys/block/{}/device/model', '/sys/block/{}/device/name'],
-                 'serial': ['/sys/block/{}/device/serial'],
-                 'firmware': ['/sys/block/{}/device/rev', '/sys/block/{}/device/fwrev'],
-                 'size': ['/sys/block/{}/size'],
-                 'vendor': ['/sys/block/{}/device/vendor']}
+alternatives = {'model': ['/sys/block/{}/device/model', '/sys/block/{}/device/name'],
+                'serial': ['/sys/block/{}/device/serial'],
+                'firmware': ['/sys/block/{}/device/rev', '/sys/block/{}/device/fwrev'],
+                'size': ['/sys/block/{}/size'],
+                'vendor': ['/sys/block/{}/device/vendor']}
 
-hdparmRex = { 'model': r'\sModel=([\w\s\-]*)[\,\n]',
-              'firmware': r'\s*FwRev=([\w\s\-\.]*)[\,\n]',
-              'serial': r'\s*SerialNo=([\w\s\-]*)[\,\n]'}
+hdparmRex = {'model': r'\sModel=([\w\s\-]*)[\,\n]',
+             'firmware': r'\s*FwRev=([\w\s\-\.]*)[\,\n]',
+             'serial': r'\s*SerialNo=([\w\s\-]*)[\,\n]'}
 
 updateSmartUrl = 'https://raw.githubusercontent.com/mirror/smartmontools/master/drivedb.h'
 
-parser = ArgumentParser(description='List all conntected drives and monitore the S.M.A.R.T.-status', epilog='Baba {} ({}) by Schluggi'.format(__version__, __versionDate__))
+parser = ArgumentParser(description=f'List all conntected drives and monitore the S.M.A.R.T.-status', epilog='Baba {__version__} ({__version__}) by Schluggi')
 parser.add_argument('device', help='only show specific device', nargs='?')
 parser.add_argument('-m', '--mib', help='show sizes in KiB, MiB, GiB, TiB and PiB', action='store_true')
 parser.add_argument('-u', '--update-drivedb', help='updating drivedb.h to increase the S.M.A.R.T. compatibility. This is equal to "update-smart-drivedb"', action='store_true')
@@ -45,7 +45,7 @@ parser.add_argument('-w', '--written', help='use 32 KB LBAs instead of the defau
 args = parser.parse_args()
 
 
-def from_file(devname, keys):
+def from_file(devname: str, keys: str or list) -> str:
     rv = ''
     if type(keys) is str:
         keys = [keys]
@@ -78,35 +78,20 @@ def update_drivedb():
     print('OK\nFinish!')
 
 
-def calc_size(bytes, factor=1000, precision=0):
-    units = ['B', 'KB', 'MB', 'GB', 'TB', 'PB']
-    template = '{:.?f} {}'.replace('?', str(precision))
-
-    if factor == 1024:
+def convert_bytes(size: int, precision: int = 0) -> str:
+    if args.mib:
         units = ['B', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB']
+        conversion = 1024
+    else:
+        units = ['B', 'KB', 'MB', 'GB', 'TB', 'PB']
+        conversion = 1000
 
-    if bytes == 0:
-        rv = '-'
+    for unit in units:
+        if size < conversion:
+            return f'{size:.{precision}f} {unit}'
+        size /= conversion
 
-    elif bytes < factor:
-        rv = '{} {}'.format(bytes, units[0])
-
-    elif bytes < factor**2:
-        rv = template.format(bytes/factor, units[1])
-
-    elif bytes < factor**3:
-        rv = template.format(bytes/factor**2, units[2])
-
-    elif bytes < factor**4:
-        rv = template.format(bytes/factor**3, units[3])
-
-    elif bytes < factor**5:
-        rv = template.format(bytes/factor**4, units[4])
-
-    elif bytes < factor**6:
-        rv = template.format(bytes/factor**5, units[5])
-
-    return rv
+    return size
 
 
 def grabber(d, attributes):
@@ -121,7 +106,7 @@ def grabber(d, attributes):
     return '-'
 
 
-def valuechecker(dev, factor):
+def valuechecker(dev: str) -> list:
     rv = {'vendor': '-',
           'model': '-',
           'serial': '-',
@@ -130,7 +115,7 @@ def valuechecker(dev, factor):
           'runtime': '-',
           'written': '-',
           'rotation': '-',
-          'lifetime':  '-',
+          'lifetime': '-',
           'smart': '-'}
 
     device = Device(dev, args.timeout)
@@ -163,7 +148,7 @@ def valuechecker(dev, factor):
 
         size = device.analyse('size')
         if size:
-            rv['size'] = calc_size(int(size), factor)
+            rv['size'] = convert_bytes(int(size))
 
         runtime = device.analyse('runtime')
         if runtime:
@@ -181,12 +166,12 @@ def valuechecker(dev, factor):
         if written:
             written = int(written.split(' [')[0].replace('.', ''))
             if device.name.startswith('nvme'):
-                rv['written'] = calc_size(written*512*1000, factor, precision=1)
+                rv['written'] = convert_bytes(written * 512 * 1000, precision=1)
             else:
                 if args.written:
-                    rv['written'] = calc_size(written*32000, factor, precision=1)
+                    rv['written'] = convert_bytes(written * 32000, precision=1)
                 else:
-                    rv['written'] = calc_size(written*512, factor, precision=1)
+                    rv['written'] = convert_bytes(written * 512, precision=1)
 
     if rv['model'] == '-':
         rv['model'] = from_file(device.name, ['vendor', 'model'])
@@ -198,8 +183,8 @@ def valuechecker(dev, factor):
         rv['firmware'] = from_file(device.name, 'firmware')
 
     if rv['size'] == '-' and device.name.startswith('sr') is False:
-        size = int(from_file(device.name, 'size'))*512
-        rv['size'] = calc_size(size, factor=factor)
+        size = int(from_file(device.name, 'size')) * 512
+        rv['size'] = convert_bytes(size)
 
     return [rv['model'],
             rv['serial'],
@@ -214,12 +199,12 @@ def valuechecker(dev, factor):
 
 def short(s, max_len):
     if args.verbose:
-        return '{} | '.format(s)
+        return f'{s} | '
 
     elif len(s) > max_len:
         split_str = '[..]'
-        split_len = int(max_len/2 - len(split_str)/2)
-        return '{}{}{}'.format(s[:split_len], split_str, s[-split_len:])
+        split_len = int(max_len / 2 - len(split_str) / 2)
+        return f'{s[:split_len]}{split_str}{s[-split_len:]}'
 
     else:
         return s
@@ -258,20 +243,14 @@ elif args.device:
 else:
     devices = [f for f in sorted(listdir('/sys/block/'), key=lambda x: (len(x), x)) if f.startswith(supported)]
 
-factor = 1000
-if args.mib:
-    factor = 1024
-
-
 print('\x1b[1m{}'.format('Device'.ljust(8)), end='', flush=False)
 
 for c in cols:
     print(c[0].ljust(c[1]), end='', flush=False)
 print('\x1b[0m')
 
-
 for lno, filename in enumerate(devices):
-    #: colored lines
+    #: colorize lines
     if lno % 2:
         print('\x1b[33m', end='')
     else:
@@ -281,34 +260,34 @@ for lno, filename in enumerate(devices):
     print(filename.ljust(8), flush=True, end='')
 
     #: get and print the other values
-    for i, value in enumerate(valuechecker('/dev/{}'.format(filename), factor=factor)):
+    for i, value in enumerate(valuechecker(f'/dev/{filename}')):
         if value is None:
             value = '-'
 
         if i == 8:  # smart
             if value in ('PASSED', 'OK'):
-                value = colored('green', '    OK    ')
+                value = colorize('green', '    OK    ')
 
             elif value == 'DSBLD':
-                value = colored('red', ' DISABLED ')
+                value = colorize('red', ' DISABLED ')
 
             elif value == 'UDMA':
-                value = colored('red', ' UltraDMA')
+                value = colorize('red', ' UltraDMA')
 
             elif value == 'TIMEOUT':
-                value = colored('purple', ' TIME-OUT ')
+                value = colorize('purple', ' TIME-OUT ')
 
             elif value == 'UNKNOWN':
-                value = colored('blue', ' UNKNOWN  ')
+                value = colorize('blue', ' UNKNOWN  ')
 
             elif value == 'USBB':
-                value = colored('blue', 'USB-BRIDGE')
+                value = colorize('blue', 'USB-BRIDGE')
 
             elif value == '-':
-                value = colored('dark', ' NO SMART ')
+                value = colorize('dark', ' NO SMART ')
 
             elif value != '-':
-                value = colored('red', value.ljust(cols[i][1]))
+                value = colorize('red', value.ljust(cols[i][1]))
 
             print(value, end='')
 
@@ -317,18 +296,18 @@ for lno, filename in enumerate(devices):
             just = cols[i][1] - len(value_str) - 1
 
             if value <= 45:
-                value = colored('red', '{}%'.format(value))
+                value = colorize('red', f'{value}%')
 
             elif value < 80:
-                value = colored('yellow', '{}%'.format(value))
+                value = colorize('yellow', f'{value}%')
 
             else:
-                value = colored('green', '{}%'.format(value))
+                value = colorize('green', f'{value}%')
 
             print(value.ljust(len(value) + just), end='')
 
         else:
-            print(short(value, cols[i][1]-1).ljust(cols[i][1]), end='')
+            print(short(value, cols[i][1] - 1).ljust(cols[i][1]), end='')
 
     print('\x1b[0m')
 exit()
