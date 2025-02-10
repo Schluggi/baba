@@ -2,11 +2,12 @@
 from argparse import ArgumentParser
 from os import listdir, getuid
 from shutil import copyfile, move
-from subprocess import TimeoutExpired, Popen
+from subprocess import TimeoutExpired
 from urllib.request import urlretrieve
+
 from devices import Device
 
-__version__ = '6.3.2'
+__version__ = '6.3.3'
 __versionDate__ = '2025-02-10'
 
 supported = ('sd', 'mmcblk', 'sr', 'vd', 'nvme')
@@ -69,7 +70,7 @@ def update_drivedb():
     urlretrieve(updateSmartUrl, '/var/lib/smartmontools/drivedb/drivedb.h.new')
 
     print('OK\nBackuping current drivedb...', flush=True, end='')
-    copyfile('/var/lib/smartmontools/drivedb/drivedb.h', '/var/lib/smartmontools/drivedb/drivedb.h.old')    
+    copyfile('/var/lib/smartmontools/drivedb/drivedb.h', '/var/lib/smartmontools/drivedb/drivedb.h.old')
 
     print('OK\nActivate new drivedb...', flush=True, end='')
     move('/var/lib/smartmontools/drivedb/drivedb.h.new', '/var/lib/smartmontools/drivedb/drivedb.h')
@@ -214,12 +215,12 @@ def valuechecker(dev, factor):
 def short(s, max_len):
     if args.verbose:
         return '{} | '.format(s)
-        
+
     elif len(s) > max_len:
         split_str = '[..]'
         split_len = int(max_len/2 - len(split_str)/2)
         return '{}{}{}'.format(s[:split_len], split_str, s[-split_len:])
-        
+
     else:
         return s
 
@@ -235,10 +236,10 @@ def colored(color, s):
         return '\x1b[0m\x1b[45m\x1b[1m{}\x1b[0m'.format(s)
 
     elif color == 'blue':
-        return '\x1b[0m\x1b[44m\x1b[1m{}\x1b[0m'.format(s)    
+        return '\x1b[0m\x1b[44m\x1b[1m{}\x1b[0m'.format(s)
 
     elif color == 'dark':
-        return '\x1b[0m\x1b[40m\x1b[1m{}\x1b[0m'.format(s)    
+        return '\x1b[0m\x1b[40m\x1b[1m{}\x1b[0m'.format(s)
 
     elif color == 'turkey':
         return '\x1b[0m\x1b[46m\x1b[1m{}\x1b[0m'.format(s)
@@ -253,7 +254,7 @@ if getuid() != 0:
 elif args.update_drivedb:
     update_drivedb()
     exit()
-     
+
 elif args.device:
     if args.device.startswith('/dev/'):
         devices = [args.device.split('/')[-1]]
@@ -279,8 +280,8 @@ for lno, filename in enumerate(devices):
     if lno % 2:
         print('\x1b[33m', end='')
     else:
-        print('\x1b[36m', end='') 
-    
+        print('\x1b[36m', end='')
+
     #: print device name
     print(filename.ljust(8), flush=True, end='')
 
@@ -292,13 +293,13 @@ for lno, filename in enumerate(devices):
         if i == 8:  # smart
             if value in ('PASSED', 'OK'):
                 value = colored('green', '    OK    ')
-            
+
             elif value == 'DSBLD':
                 value = colored('red', ' DISABLED ')
 
             elif value == 'UDMA':
                 value = colored('red', ' UltraDMA')
-            
+
             elif value == 'TIMEOUT':
                 value = colored('purple', ' TIME-OUT ')
 
@@ -307,32 +308,32 @@ for lno, filename in enumerate(devices):
 
             elif value == 'USBB':
                 value = colored('blue', 'USB-BRIDGE')
-            
+
             elif value == '-':
                 value = colored('dark', ' NO SMART ')
-            
+
             elif value != '-':
                 value = colored('red', value.ljust(cols[i][1]))
-                
+
             print(value, end='')
 
         elif i == 7 and value not in ['-', '?']:  # lifetime
             value_str = str(value)
             just = cols[i][1] - len(value_str) - 1
-            
+
             if value <= 45:
                 value = colored('red', '{}%'.format(value))
-                
+
             elif value < 80:
                 value = colored('yellow', '{}%'.format(value))
 
             else:
                 value = colored('green', '{}%'.format(value))
-            
+
             print(value.ljust(len(value) + just), end='')
 
         else:
             print(short(value, cols[i][1]-1).ljust(cols[i][1]), end='')
-        
+
     print('\x1b[0m')
 exit()
