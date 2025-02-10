@@ -28,9 +28,9 @@ alternatives = {'model': ['/sys/block/{}/device/model', '/sys/block/{}/device/na
                 'size': ['/sys/block/{}/size'],
                 'vendor': ['/sys/block/{}/device/vendor']}
 
-hdparmRex = {'model': r'\sModel=([\w\s\-]*)[\,\n]',
-             'firmware': r'\s*FwRev=([\w\s\-\.]*)[\,\n]',
-             'serial': r'\s*SerialNo=([\w\s\-]*)[\,\n]'}
+# hdparmRex = {'model': r'\sModel=([\w\s\-]*)[\,\n]',
+#              'firmware': r'\s*FwRev=([\w\s\-\.]*)[\,\n]',
+#              'serial': r'\s*SerialNo=([\w\s\-]*)[\,\n]'}
 
 updateSmartUrl = 'https://raw.githubusercontent.com/mirror/smartmontools/master/drivedb.h'
 
@@ -45,7 +45,7 @@ parser.add_argument('-w', '--written', help='use 32 KB LBAs instead of the defau
 args = parser.parse_args()
 
 
-def from_file(devname: str, keys: str or list) -> str:
+def get_device_info_from_file(devname: str, keys: str or list) -> str:
     rv = ''
     if type(keys) is str:
         keys = [keys]
@@ -150,17 +150,9 @@ def valuechecker(dev: str) -> list:
         if size:
             rv['size'] = convert_bytes(int(size))
 
-        runtime = device.analyse('runtime')
-        if runtime:
-            rv['runtime'] = runtime
-
-        rotation = device.analyse('rotation')
-        if rotation:
-            rv['rotation'] = rotation
-
-        lifetime = device.analyse('lifetime')
-        if lifetime:
-            rv['lifetime'] = lifetime
+        rv['runtime'] = device.analyse('runtime') or rv['runtime']
+        rv['rotation'] = device.analyse('rotation') or rv['rotation']
+        rv['lifetime'] = device.analyse('lifetime') or rv['lifetime']
 
         written = device.analyse('written')
         if written:
@@ -174,16 +166,16 @@ def valuechecker(dev: str) -> list:
                     rv['written'] = convert_bytes(written * 512, precision=1)
 
     if rv['model'] == '-':
-        rv['model'] = from_file(device.name, ['vendor', 'model'])
+        rv['model'] = get_device_info_from_file(device.name, ['vendor', 'model'])
 
     if rv['serial'] == '-':
-        rv['serial'] = from_file(device.name, 'serial')
+        rv['serial'] = get_device_info_from_file(device.name, 'serial')
 
     if rv['firmware'] == '-':
-        rv['firmware'] = from_file(device.name, 'firmware')
+        rv['firmware'] = get_device_info_from_file(device.name, 'firmware')
 
     if rv['size'] == '-' and device.name.startswith('sr') is False:
-        size = int(from_file(device.name, 'size')) * 512
+        size = int(get_device_info_from_file(device.name, 'size')) * 512
         rv['size'] = convert_bytes(size)
 
     return [rv['model'],
