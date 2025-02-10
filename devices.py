@@ -87,20 +87,21 @@ class Device(object):
             pass
 
     def analyse(self, mode):
-        if mode == 'lifetime':
-            return self._lifetime()
-        elif mode == 'runtime':
-            return self._runtime()
-        elif mode == 'rotation':
-            return self._rotation()
-        elif mode == 'size':
-            return self._size()
-        elif mode == 'health':
-            return self._health()
-        elif mode == 'written':
-            return self._written()
-        else:
-            raise AttributeError('Unknown mode: {}'.format(mode))
+        match mode:
+            case 'lifetime':
+                return self._lifetime()
+            case 'runtime':
+                return self._runtime()
+            case 'rotation':
+                return self._rotation()
+            case 'size':
+                return self._size()
+            case 'health':
+                return self._health()
+            case 'written':
+                return self._written()
+            case _:
+                raise AttributeError(f'Unknown mode: {mode}')
 
     def _lifetime(self):
         if self.smart_data is {} or self.smart_info is {}:
@@ -189,7 +190,7 @@ class Device(object):
             raw_size = self.smart_info['User Capacity']
 
         if raw_size:
-            rex = search('\s*([\d\.]*)', raw_size.replace('.', '').replace(',', ''))
+            rex = search('\s*([\d.]*)', raw_size.replace('.', '').replace(',', ''))
             if rex:
                 size = rex.group(1)
             return size
@@ -234,7 +235,7 @@ class Device(object):
         elif self.name.startswith('nvme'):
             if 'Data Units Written' in self.smart_data:
                 raw_written = self.smart_data['Data Units Written']
-                rex = search('\s*([\d\.]*)', raw_written)
+                rex = search('\s*([\d.]*)', raw_written)
                 if rex:
                     return rex.group(1)
 
