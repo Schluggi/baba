@@ -225,27 +225,22 @@ def short(s, max_len):
         return s
 
 
-def colored(color, s):
-    if color == 'red':
-        return '\x1b[0m\x1b[41m\x1b[1m{}\x1b[0m'.format(s)
-
-    elif color == 'green':
-        return '\x1b[0m\x1b[42m\x1b[1m{}\x1b[0m'.format(s)
-
-    elif color == 'purple':
-        return '\x1b[0m\x1b[45m\x1b[1m{}\x1b[0m'.format(s)
-
-    elif color == 'blue':
-        return '\x1b[0m\x1b[44m\x1b[1m{}\x1b[0m'.format(s)
-
-    elif color == 'dark':
-        return '\x1b[0m\x1b[40m\x1b[1m{}\x1b[0m'.format(s)
-
-    elif color == 'turkey':
-        return '\x1b[0m\x1b[46m\x1b[1m{}\x1b[0m'.format(s)
-
-    elif color == 'yellow':
-        return '\x1b[0m\x1b[1m\x1b[43m\x1b[30m{}\x1b[0m'.format(s)
+def colorize(color, text):
+    match color:
+        case 'red':
+            return '\x1b[0m\x1b[41m\x1b[1m{text}\x1b[0m'
+        case 'green':
+            return f'\x1b[0m\x1b[42m\x1b[1m{text}\x1b[0m'
+        case 'purple':
+            return f'\x1b[0m\x1b[45m\x1b[1m{text}\x1b[0m'
+        case 'blue':
+            return f'\x1b[0m\x1b[44m\x1b[1m{text}\x1b[0m'
+        case 'dark':
+            return f'\x1b[0m\x1b[40m\x1b[1m{text}\x1b[0m'
+        case 'turkey':
+            return f'\x1b[0m\x1b[46m\x1b[1m{text}\x1b[0m'
+        case 'yellow':
+            return f'\x1b[0m\x1b[1m\x1b[43m\x1b[30m{text}\x1b[0m'
 
 
 if getuid() != 0:
