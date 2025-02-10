@@ -28,9 +28,9 @@ alternatives = { 'model': ['/sys/block/{}/device/model', '/sys/block/{}/device/n
                  'size': ['/sys/block/{}/size'],
                  'vendor': ['/sys/block/{}/device/vendor']}
 
-hdparmRex = { 'model': b'\sModel=([\w\s\-]*)[\,\n]',
-              'firmware': b'\s*FwRev=([\w\s\-\.]*)[\,\n]',
-              'serial': b'\s*SerialNo=([\w\s\-]*)[\,\n]'}
+hdparmRex = { 'model': r'\sModel=([\w\s\-]*)[\,\n]',
+              'firmware': r'\s*FwRev=([\w\s\-\.]*)[\,\n]',
+              'serial': r'\s*SerialNo=([\w\s\-]*)[\,\n]'}
 
 updateSmartUrl = 'https://raw.githubusercontent.com/mirror/smartmontools/master/drivedb.h'
 
@@ -86,7 +86,7 @@ def calc_size(bytes, factor=1000, precision=0):
     if factor == 1024:
         units = ['B', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB']
 
-    if bytes is 0:
+    if bytes == 0:
         rv = '-'
 
     elif bytes < factor:
@@ -297,7 +297,7 @@ for lno, filename in enumerate(devices):
         if value is None:
             value = '-'
 
-        if i is 8:  # smart
+        if i == 8:  # smart
             if value in ('PASSED', 'OK'):
                 value = colored('green', '    OK    ')
             
@@ -324,7 +324,7 @@ for lno, filename in enumerate(devices):
                 
             print(value, end='')
 
-        elif i is 7 and value not in ['-', '?']:  # lifetime
+        elif i == 7 and value not in ['-', '?']:  # lifetime
             value_str = str(value)
             just = cols[i][1] - len(value_str) - 1
             
