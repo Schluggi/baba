@@ -37,7 +37,6 @@ parser = ArgumentParser(description='List all conntected drives and monitore the
 parser.add_argument('device', help='only show specific device', nargs='?')
 parser.add_argument('-m', '--mib', help='show sizes in KiB, MiB, GiB, TiB and PiB', action='store_true')
 parser.add_argument('-u', '--update-drivedb', help='updating drivedb.h to increase the S.M.A.R.T. compatibility. This is equal to "update-smart-drivedb"', action='store_true')
-parser.add_argument('-s', '--self-update', help='installs the newest version of baba', action='store_true')
 parser.add_argument('-t', '--timeout', help='the time to wait for a timeout in seconds (default 4)', nargs='?', default=4)
 parser.add_argument('-v', '--verbose', help='increase output verbosity', action='store_true')
 parser.add_argument('-w', '--written', help='use 32 KB LBAs instead of the default 512 Bytes to calculate the "written" value (only for non-nvme devices)', action='store_true')
@@ -254,12 +253,6 @@ if getuid() != 0:
 elif args.update_drivedb:
     update_drivedb()
     exit()
-
-elif args.self_update:
-    proc = Popen('/usr/share/baba/update.sh')
-    if proc.wait() != 0:
-        print('Oops. Please run /usr/share/baba/update.sh manually!') 
-    exit('Update finish!')
      
 elif args.device:
     if args.device.startswith('/dev/'):
