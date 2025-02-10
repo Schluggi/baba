@@ -1,8 +1,7 @@
-#!/usr/bin/env python3
+from pprint import pprint
 from re import findall, M, search
 from subprocess import Popen, PIPE, STDOUT
 from sys import argv
-from pprint import pprint
 
 
 class Device(object):
