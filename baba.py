@@ -6,9 +6,8 @@ from subprocess import TimeoutExpired, Popen
 from urllib.request import urlretrieve
 from devices import Device
 
-
-__version__ = '6.3.1'
-__versionDate__ = '2020-04-10'
+__version__ = '6.3.2'
+__versionDate__ = '2025-02-10'
 
 supported = ('sd', 'mmcblk', 'sr', 'vd', 'nvme')
 
